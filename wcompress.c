@@ -1,7 +1,7 @@
 #include <dirent.h> // scan folder
 #include <stdio.h>
-#include <stdlib.h> // 
-#include <string.h> // strcmp
+#include <stdlib.h> 
+#include <string.h>
 #include <sys/stat.h> // stat and mkdir
 #include <unistd.h> // getcwd
 
@@ -18,11 +18,10 @@
 Global variables-functions and libs
 ==================================== */
 char version_number[4] = "0.1";
-char backup_folder[10] = "fbackup/";
+char folder[10] = "wcompress/";
 #include "lib/functions.h"
 #include "lib/help.h"
 
-#include "lib/backup.h"
 #include "lib/css.h"
 #include "lib/html.h"
 #include "lib/js.h"
@@ -31,7 +30,7 @@ Main
 ==================================== */
 int main(int argc, char *argv[]) {
 // Local variables
-	int isOk_to_Compress;
+	int is_ok;
 	char cwd[MAX];
 	getcwd(cwd, sizeof(cwd));
 
@@ -58,50 +57,30 @@ int main(int argc, char *argv[]) {
 			printf("HTML compression has been started!\n");
 			// if all selected
 			if(strcmp(argv[2], "--all") == 0) {
-				isOk_to_Compress = findAll(cwd, fileList, ".html", 0);
-				if(isOk_to_Compress) {
+				is_ok = findAll(cwd, fileList, ".html", 0);
+				if(is_ok >= 1) {
 					compressHTML(fileList, argv);
 				}
 				free(fileList);
 			}
 			// if specific input
 			else {
-				isOk_to_Compress = checkFile(argv[2], ".html", 0);
-				if(isOk_to_Compress) {
+				is_ok = checkFile(argv[2], ".html", 0);
+				if(is_ok) {
 					compressHTML(NULL, argv);
 				}
 			}
 			//end
 		}
-		// CSS //
-		else if(strcmp(argv[1], "css") == 0) {
-			printf("CSS compression has been started!\n");
-			isOk_to_Compress = checkFile(argv[2], ".css", 0);
-			if(isOk_to_Compress)
-				compressCSS();
-			//end
-		}
-		// JS //
-		else if(strcmp(argv[1], "js") == 0) {
-			printf("JS compression has been started!\n");
-			isOk_to_Compress = checkFile(argv[2], ".js", 0);
-			if(isOk_to_Compress)
-				compressJS();
-			//end
-		}
-		else if(strcmp(argv[1], "all") == 0) {
-				
-		}
 		else {
-			printf("%s not identified as an output file. To get help type:\nwcompressor --help", argv[1]);
+			printf("%s not identified as an input file. To get help type:\nwcompressor --help", argv[1]);
 			// end
 		}
 	}
 	else {
-		printf("Invalid arguments please make sure you read guide, type: \nwcompressor --help");
+		printf("Invalid arguments please make sure you read the guide, type: \nwcompressor --help");
 		// end
 	}
-
 	printf("\n");
 	return 0;
 }
