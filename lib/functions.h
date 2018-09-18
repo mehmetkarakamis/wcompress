@@ -1,19 +1,30 @@
-void createFolder() {
+int getSize(char file[]) {
+	int i = 0;
+	char buff;
+	FILE *fp = fopen(file,"r");
+	while(fscanf(fp,"%c",&buff) != EOF)
+		i++;
+	return sizeof(char)*i;
+}
+int createFolder() {
 	struct stat buf;
     // If file not exists, then try to create one
     if (stat(folder, &buf) == -1) {
     	if(mkdir(folder,0775) == 0) {
 			printf("\"%s\" folder created successfully!\n", folder);
+			return 1;
     	}
     	else {
     		printf("Error: \"%s\" cannot be created, it might be because of write permissions.\n", folder);
     		printf("You may need to run the program with sudo priviliges.\n");
-    		printf("Please also check you don't have %s file or folder in directory.", folder);
+    		printf("Please also check you don't have \"%s\" file or folder in directory.", folder);
+    		return 0;
     		// end
     	}
     }
 	else {
 		printf("Error: There is folder named \"%s\" please move the folder.", folder);
+		return 0;
 		// end
 	}
 }
@@ -78,7 +89,7 @@ int findAll(char cwd[], char **fileList, char type[], int i) {
 	if (d) {
 		while ((dir = readdir(d)) != NULL) {
 			if(strcmp(dir->d_name, ".") != 0 && strcmp(dir->d_name, "..") != 0) {
-				if(isDirectory(dir->d_name) & want_sub == 'y') {
+				if(isDirectory(dir->d_name) && want_sub == 'y') {
 					char temp_cwd[MAX] = {0};
 					strcat(temp_cwd, cwd);
 					strcat(temp_cwd, "/");
@@ -99,31 +110,29 @@ int findAll(char cwd[], char **fileList, char type[], int i) {
 	}
 	return i;
 }
-void deleteBreaks(FILE *file_read, FILE *file_write, char type[]) {
-	printf("Deleting breaks...");
-	char buff;
-	// HTML //
-	if(strcmp(type,".html") == 0) {
-		while(fscanf(file_read,"%c",&buff) != EOF) {
-			if(buff == '<') {
-				fprintf(file_write,"%c",buff);
-				while(buff != '>') {
-					fscanf(file_read,"%c", &buff);
-					fprintf(file_write,"%c", buff);
-				}
-			}
-		}
-	}
-	// CSS //
-	else if(strcmp(type,".css") == 0) {
+void writeString(char cwd[], char string[]) {
+	char new_cwd[MAX];
+	strcpy(new_cwd, folder);
+	strcat(new_cwd, cwd);
 
+	FILE *fp = fopen(new_cwd, "w");
+	int length = strlen(string);
+	int i = 0;
+	while(i < length) {
+		fprintf(fp,"%c",string[i]);
+		i++;
 	}
-	// JS //
-	else if(strcmp(type,".js") == 0) {
-
-	}
-	printf("Done!\n");
+	fclose(fp);
 }
-void deleteTabs(){
-
+// Delete the breaks from HTML and JS
+void deleteBreaks(char source[], char *destination) {
+	printf("Deleting breaks...");
+	FILE *fp_source = fopen(source,"r");
+	char buff[MAX];
+	while(fscanf(fp_source, "%s", buff) != EOF) {
+		strcat(destination, buff);
+		strcat(destination, " ");
+	}
+	fclose(fp_source);
+	printf("Done!\n");
 }

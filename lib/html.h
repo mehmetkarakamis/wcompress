@@ -9,48 +9,31 @@ void compressHTML(char **fileList, char *argv[]) {
 		power = atoi(argv[3]);
 	else
 		power = 1;
+	// Check if folder has been created successfully
+	int checkFolder = createFolder();
 
-	createFolder();
 	// Single file
-	if(fileList == NULL) {
+	if(fileList == NULL && checkFolder) {
+		// Create an array
+		int byte = getSize(argv[2]);
+		char *file = (char *)malloc(byte);
 
-		char file_write[MAX_BY4];
-		strcpy(file_write, folder);
-		strcat(file_write, argv[2]);
-
-		FILE *html_read = fopen(argv[2], "r");
-		FILE *html_write = fopen(file_write, "w");
-		// Power -- deleting comments
-		if(power == 1) {
-			deleteBreaks(html_read, html_write, ".html");
+		switch(power) {
+			case 1: deleteBreaks(argv[2], file);
+					break;
+			// case 2: deleteComments_HTML();
+			// 		break;
+			// case 3:
+			// 		deleteBreaks(argv[2], file);
+			// 		deleteComments_HTML();
+			// 		break;
 		}
-		else if(power == 2) {
-
-		}
-		else if(power == 3) {
-
-		}
-		else if(power == 4) {
-
-		}
-		else if(power == 5) {
-
-		}
-		else if(power == 6) {
-
-		}
-		else if(power == 7) {
-
-		}
-		// default
-		else {
-
-		}
-		fclose(html_read);
-		fclose(html_write);
+		writeString(argv[2], file);
 	}
 	// Filelist
-	else {
+	else if (fileList != NULL && checkFolder) {
 
 	}
+	printf("HTML compression finished!");
+	// end
 }

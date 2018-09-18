@@ -11,7 +11,7 @@
 #define MAX_BY8 256
 // argv[0] = program
 // argv[1] = file type (html,css,js)
-// argv[2] = input file or --all
+// argv[2] = input file or --all (index.html)
 // argv[3] = compression method (7,4,2,1..)
 
 /* ===================================
